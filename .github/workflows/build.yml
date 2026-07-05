@@ -60,11 +60,11 @@ jobs:
       - name: West build (${{ matrix.shield }})
         working-directory: firmware/zmk-config/zmk/app
         run: >-
-          west build -p -b nice_nano_v2
+          west build -p -b nice_nano/nrf52840/zmk
           -d $GITHUB_WORKSPACE/firmware/zmk-config/build/${{ matrix.shield }}
           ${{ matrix.west_args }}
           -- -DSHIELD=${{ matrix.shield }}
-          -DBOARD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config
+          -DSHIELD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config
           ${{ matrix.cmake_args }}
 
       - name: Rename artifact

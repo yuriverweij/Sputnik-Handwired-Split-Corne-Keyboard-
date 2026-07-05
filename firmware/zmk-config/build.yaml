@@ -19,10 +19,10 @@
 #
 ---
 include:
-  - board: nice_nano_v2
+  - board: nice_nano/nrf52840/zmk
     shield: corne_hw_left
     snippet: studio-rpc-usb-uart
-    cmake-args: -DBOARD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config -DCONFIG_ZMK_STUDIO=y
-  - board: nice_nano_v2
+    cmake-args: -DSHIELD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config -DCONFIG_ZMK_STUDIO=y
+  - board: nice_nano/nrf52840/zmk
     shield: corne_hw_right
-    cmake-args: -DBOARD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config
+    cmake-args: -DSHIELD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config
