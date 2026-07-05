@@ -5,6 +5,5 @@ url: https://zmk.dev
 requires: [ ]
 features:
   - keys
-  - display
 siblings: [ corne_hw_right ]
 
