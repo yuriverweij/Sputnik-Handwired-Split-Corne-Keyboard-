@@ -137,6 +137,30 @@ You have ready‑to‑print 3MF files and editable STEP files:
   - Width: ~12 mm
 - Any battery that fits within this space will work.
 
+### Power switch (optional)
+Add an **SPST switch in series with the battery's positive (B+) lead** to
+turn each half off. Cut the battery's positive wire and route it through the
+switch instead of soldering it straight to the `B+` pad:
+
+```
+Battery (+) ──── [ SWITCH ] ──── B+ pad
+Battery (−) ─────────────────── B− pad
+```
+
+- Wire it **in series (inline)**, never across `B+`/`B−` — bridging the two
+  pads would short the battery.
+- Only the battery is switched. With the switch OFF and USB plugged in, the
+  board still runs off USB **and the battery still charges** through the
+  Nice!nano's charging circuit. So: switch OFF = run/charge on USB, switch
+  ON = run on battery when unplugged.
+- An **SPST** switch (2 pins) is all you need. An **SPDT** (3-pin) switch also
+  works — just use the middle (common) pin plus one outer pin.
+- Current is only a few mA, so any small slide/toggle switch works; pick one
+  that fits your case.
+- This is a split keyboard, so add **one switch per half** (each half has its
+  own Nice!nano and battery).
+- Solder with the battery disconnected where possible to avoid accidental shorts.
+
 ## Repository Layout
 - Firmware
   - Prebuilt UF2s: [`firmware/ready to flash/`](<firmware/ready to flash/>)
