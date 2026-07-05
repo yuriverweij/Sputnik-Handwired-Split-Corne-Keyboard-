@@ -57,16 +57,6 @@ jobs:
         working-directory: firmware/zmk-config
         run: west zephyr-export
 
-      - name: Diagnose keymap discovery (temporary)
-        working-directory: firmware/zmk-config
-        run: |
-          echo "--- zmk commit ---"
-          git -C zmk rev-parse HEAD
-          echo "--- files mentioning 'locate keymap' ---"
-          grep -rn "locate keymap" zmk/ || true
-          echo "--- keymap-module modules.cmake ---"
-          find zmk -path '*keymap-module*modules.cmake' -exec echo {} \; -exec cat -n {} \;
-
       - name: West build (${{ matrix.shield }})
         working-directory: firmware/zmk-config/zmk/app
         run: >-
@@ -76,6 +66,7 @@ jobs:
           -- -DSHIELD=${{ matrix.shield }}
           -DBOARD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config
           -DSHIELD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config
+          -DZMK_CONFIG=$GITHUB_WORKSPACE/firmware/zmk-config/config
           ${{ matrix.cmake_args }}
 
       - name: Rename artifact
