@@ -64,7 +64,7 @@ jobs:
           -d $GITHUB_WORKSPACE/firmware/zmk-config/build/${{ matrix.shield }}
           ${{ matrix.west_args }}
           -- -DSHIELD=${{ matrix.shield }}
-          -DSHIELD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config
+          -DBOARD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config
           ${{ matrix.cmake_args }}
 
       - name: Rename artifact
