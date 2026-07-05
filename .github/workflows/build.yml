@@ -1,5 +1,14 @@
 name: Build ZMK firmware
 
+# This repo's zmk-config lives at firmware/zmk-config instead of the repo
+# root. The official zmkfirmware/zmk build-user-config.yml reusable workflow
+# can't handle that: "west init -l <config_path>" creates the workspace at
+# the parent of config_path, but the reusable workflow always runs
+# "west update"/"west build" from $GITHUB_WORKSPACE, so the two never line
+# up once config_path is nested more than one level deep. This workflow
+# reimplements the same steps with the working directory set explicitly.
+# build.yaml is kept for reference but is not consumed here.
+
 on:
   push:
   pull_request:
@@ -7,7 +16,63 @@ on:
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
-    with:
-      build_matrix_path: firmware/zmk-config/build.yaml
-      config_path: firmware/zmk-config/config
+    runs-on: ubuntu-latest
+    container:
+      image: zmkfirmware/zmk-build-arm:stable
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shield: corne_hw_left
+            artifact: corne_hw_left-nice_nano_v2-zmk
+            west_args: -S studio-rpc-usb-uart
+            cmake_args: -DCONFIG_ZMK_STUDIO=y
+          - shield: corne_hw_right
+            artifact: corne_hw_right-nice_nano_v2-zmk
+            west_args: ""
+            cmake_args: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache west modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            firmware/zmk-config/modules/
+            firmware/zmk-config/tools/
+            firmware/zmk-config/zephyr/
+            firmware/zmk-config/bootloader/
+            firmware/zmk-config/zmk/
+          key: zmk-config-west-${{ hashFiles('firmware/zmk-config/config/west.yml') }}
+
+      - name: West init
+        working-directory: firmware/zmk-config
+        run: west init -l config
+
+      - name: West update
+        working-directory: firmware/zmk-config
+        run: west update --fetch-opt=--filter=tree:0
+
+      - name: West zephyr-export
+        working-directory: firmware/zmk-config
+        run: west zephyr-export
+
+      - name: West build (${{ matrix.shield }})
+        working-directory: firmware/zmk-config/zmk/app
+        run: >-
+          west build -p -b nice_nano_v2
+          -d $GITHUB_WORKSPACE/firmware/zmk-config/build/${{ matrix.shield }}
+          ${{ matrix.west_args }}
+          -- -DSHIELD=${{ matrix.shield }}
+          -DSHIELD_ROOT=$GITHUB_WORKSPACE/firmware/zmk-config
+          ${{ matrix.cmake_args }}
+
+      - name: Rename artifact
+        run: |
+          cp "firmware/zmk-config/build/${{ matrix.shield }}/zephyr/zmk.uf2" \
+             "firmware/zmk-config/build/${{ matrix.shield }}/zephyr/${{ matrix.artifact }}.uf2"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: firmware/zmk-config/build/${{ matrix.shield }}/zephyr/${{ matrix.artifact }}.uf2
