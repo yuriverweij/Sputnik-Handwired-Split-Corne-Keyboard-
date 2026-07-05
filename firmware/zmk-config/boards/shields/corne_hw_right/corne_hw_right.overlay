@@ -29,10 +29,15 @@
         wakeup-source;
     };
 
+    /* columns = 12 (both halves combined) and col-offset = 6 shift this
+     * half's local columns 0-5 into keymap positions 6-11/18-23/etc, so
+     * its key events land on the right half of the shared corne_hw.keymap
+     * bindings instead of colliding with the left half's positions 0-23. */
     matrix_transform: matrix_transform {
         compatible = "zmk,matrix-transform";
-        columns = <6>;
+        columns = <12>;
         rows = <4>;
+        col-offset = <6>;
         map = <0 1 2 3 4 5  6 7 8 9 10 11  12 13 14 15 16 17  18 19 20 21 22 23>;
     };
 
