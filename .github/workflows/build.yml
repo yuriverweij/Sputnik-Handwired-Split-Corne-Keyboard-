@@ -31,6 +31,12 @@ jobs:
             artifact: corne_hw_right-nice_nano_v2-zmk
             west_args: ""
             cmake_args: ""
+          # Utility firmware: wipes the settings partition (BLE bonds + cached
+          # GATT layout) so the two halves can pair fresh after firmware changes.
+          - shield: settings_reset
+            artifact: settings_reset-nice_nano_v2-zmk
+            west_args: ""
+            cmake_args: ""
     steps:
       - uses: actions/checkout@v4
 
