@@ -1,13 +1,13 @@
+if SHIELD_CORNE_HW_LEFT
+
+config ZMK_KEYBOARD_NAME
+	default "Corne HW"
+
 config ZMK_SPLIT
-	def_bool y
+	default y
 
-config ZMK_SPLIT_BLE
-	def_bool y
-
+# Left half is the central (talks to the host and to the right peripheral).
 config ZMK_SPLIT_ROLE_CENTRAL
-	def_bool y
+	default y
 
-config ZMK_USB
-	def_bool y
-
-
+endif
